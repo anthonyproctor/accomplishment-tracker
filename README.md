@@ -1,36 +1,74 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Accomplishment Tracker
 
-## Getting Started
+A web application built with Next.js and Supabase that allows users to track their professional accomplishments. Users can sign up, log in, and maintain a record of their achievements with dates and descriptions.
 
-First, run the development server:
+## Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- User authentication (signup/login) with Supabase
+- Create and view accomplishments
+- Secure data storage with row-level security
+- Responsive design with Tailwind CSS
+- Real-time updates
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Tech Stack
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- Next.js 13+ (App Router)
+- TypeScript
+- Supabase (Authentication & Database)
+- Tailwind CSS
+- Vercel (Deployment)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Local Development
 
-## Learn More
+1. Clone the repository
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Create a `.env.local` file with your Supabase credentials:
+   ```
+   NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+   ```
+4. Run the development server:
+   ```bash
+   npm run dev
+   ```
+5. Open [http://localhost:3000](http://localhost:3000) in your browser
 
-To learn more about Next.js, take a look at the following resources:
+## Database Schema
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+The application uses two main tables in Supabase:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### profiles
+- id (uuid, primary key)
+- created_at (timestamp)
+- email (text)
+- name (text, nullable)
 
-## Deploy on Vercel
+### accomplishments
+- id (uuid, primary key)
+- created_at (timestamp)
+- title (text)
+- description (text)
+- date (date)
+- user_id (uuid, foreign key to profiles.id)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Deployment
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The application is configured for deployment on Vercel. Simply connect your repository to Vercel and it will automatically deploy your application.
+
+Make sure to add the following environment variables in your Vercel project settings:
+- NEXT_PUBLIC_SUPABASE_URL
+- NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+## Security
+
+- Row Level Security (RLS) is enabled on all tables
+- Users can only access their own data
+- Authentication is handled securely by Supabase
+- All database queries are protected by RLS policies
+
+## License
+
+MIT
