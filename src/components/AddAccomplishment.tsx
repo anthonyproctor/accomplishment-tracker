@@ -1,5 +1,9 @@
+'use client'
+
 import { useState } from 'react'
-import { createClient } from '@/lib/supabase'
+import { createClient } from '../lib/supabase'
+import { trackAccomplishmentAction } from '../lib/analytics'
+import toast from 'react-hot-toast'
 
 export default function AddAccomplishment({ onAdd }: { onAdd: () => void }) {
   const [title, setTitle] = useState('')
@@ -11,12 +15,18 @@ export default function AddAccomplishment({ onAdd }: { onAdd: () => void }) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
+    const toastId = toast.loading('Adding accomplishment...')
 
     try {
       const { data: { user } } = await supabase.auth.getUser()
-      if (!user) throw new Error('Not authenticated')
+      if (!user) {
+        toast.error('Please log in to add accomplishments', { id: toastId })
+        return
+      }
 
-      const { error } = await supabase
+      console.log('Adding accomplishment:', { title, description, date, user_id: user.id }) // Debug log
+
+      const { error, data } = await supabase
         .from('accomplishments')
         .insert([
           {
@@ -26,16 +36,23 @@ export default function AddAccomplishment({ onAdd }: { onAdd: () => void }) {
             user_id: user.id,
           },
         ])
+        .select()
 
       if (error) throw error
+
+      console.log('Added accomplishment:', data) // Debug log
+
+      // Track successful creation
+      trackAccomplishmentAction('create', title)
 
       setTitle('')
       setDescription('')
       setDate('')
       onAdd()
+      toast.success('Accomplishment added successfully!', { id: toastId })
     } catch (error) {
       console.error('Error adding accomplishment:', error)
-      alert('Failed to add accomplishment')
+      toast.error('Failed to add accomplishment', { id: toastId })
     } finally {
       setLoading(false)
     }
