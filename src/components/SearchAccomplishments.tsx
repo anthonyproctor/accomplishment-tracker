@@ -10,13 +10,13 @@ interface SearchProps {
 export default function SearchAccomplishments({ onSearch }: SearchProps) {
   const [searchTerm, setSearchTerm] = useState('')
 
-  // Debounce the search with proper dependency
-  const debouncedSearch = useCallback(
-    debounce((query: string) => {
-      onSearch(query)
-    }, 300),
-    [onSearch]
-  )
+  // Debounce the search callback
+  const debouncedSearch = useCallback((query: string) => {
+    const debouncedFn = debounce((q: string) => {
+      onSearch(q)
+    }, 300)
+    debouncedFn(query)
+  }, [onSearch])
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value
